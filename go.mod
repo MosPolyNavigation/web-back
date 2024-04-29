@@ -1,4 +1,4 @@
-module back
+module github.com/MosPolyNavigation/web-back
 
 go 1.22
 

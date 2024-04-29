@@ -1,15 +1,17 @@
 package main
 
 import (
-	"back/internal/app"
-	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/MosPolyNavigation/web-back/internal/app"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	log := logrus.New()
+	logger := log.New()
 
 	a := app.New()
 
@@ -21,11 +23,11 @@ func main() {
 	go func() {
 		<-sig
 		if err := a.Stop(complete); err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 	}()
 
 	if err := a.Run(); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 }
