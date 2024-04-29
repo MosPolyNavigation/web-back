@@ -1,0 +1,25 @@
+services:
+  server:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: server
+    hostname: server
+    ports:
+      - 9000:9000
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    hostname: mongodb
+    environment:
+      MONGO_INITDB_DATABASE: initdb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: sdlgvknoisdf
+      MONGODB_DB: polytech_navigation
+      MONGODB_USER: admin
+      MONGODB_PASSWORD: lkj09iufhjn3:l3!*(
+    volumes:
+      - ./scripts/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+      - ./.data:/data/db
+    ports:
+      - 27017:27017
