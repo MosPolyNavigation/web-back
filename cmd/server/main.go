@@ -13,7 +13,10 @@ import (
 func main() {
 	logger := log.New()
 
-	a := app.New()
+	a, err := app.New(logger)
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
