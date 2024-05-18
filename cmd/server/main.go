@@ -28,6 +28,7 @@ func main() {
 		if err := a.Stop(complete); err != nil {
 			logger.Fatal(err)
 		}
+		<-complete
 	}()
 
 	if err := a.Run(); err != nil {
