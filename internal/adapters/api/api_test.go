@@ -15,8 +15,8 @@ func TestApi_GetPlan(t *testing.T) {
 	var tests []test
 	tests = append(tests,
 		test{
-			Campus: "BS",
-			Corpus: "B",
+			Campus: "bs",
+			Corpus: "b",
 			Floor:  1,
 		},
 		test{

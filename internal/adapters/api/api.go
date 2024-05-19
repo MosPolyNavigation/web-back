@@ -34,7 +34,7 @@ type content struct {
 }
 
 func (a *api) GetPlan(campus, corpus string, floor int) (entity.Plan, error) {
-	pathInRepository := fmt.Sprintf("%s/%s/%s-%d", campus, corpus, corpus, floor)
+	pathInRepository := fmt.Sprintf("%s/%s/%s-%d", strings.ToUpper(campus), strings.ToUpper(corpus), strings.ToUpper(corpus), floor)
 	planData, err := a.getJSON(pathInRepository)
 	if err != nil {
 		a.log.Debugf("Error getting plan from github repository: %v", err)

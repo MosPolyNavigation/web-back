@@ -1,30 +1,38 @@
 package app
 
 import (
-	"context"
-	"fmt"
-	"github.com/MosPolyNavigation/web-back/internal/adapters/repository"
+	"github.com/MosPolyNavigation/web-back/internal/adapters/api"
+	"github.com/MosPolyNavigation/web-back/internal/delivery"
+	"github.com/gofiber/fiber/v3"
 	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 type app struct {
-	log log.Logger
+	log    *log.Logger
+	server *fiber.App
 }
 
 func New(log *log.Logger) (*app, error) {
-	ctx := context.Background()
-	repo, err := repository.New(ctx, log)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize repository: %w", err)
-	}
-	_ = repo
-	return &app{}, nil
+	githubApi := api.New(log)
+	client := fiber.New()
+	handlers := delivery.NewHandlers(githubApi, client, log)
+	handlers.RegisterRoute()
+	return &app{
+		log:    log,
+		server: client,
+	}, nil
 }
 
 func (app *app) Run() error {
-	return nil
+	return app.server.Listen(":" + os.Getenv("SERVER_PORT"))
 }
 
 func (app *app) Stop(done chan struct{}) error {
+	err := app.server.Shutdown()
+	if err != nil {
+		return err
+	}
+	close(done)
 	return nil
 }
