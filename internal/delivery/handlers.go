@@ -11,8 +11,6 @@ import (
 
 const planURI = "/plan"
 
-const campusQueryArg = "id"
-
 type Handlers struct {
 	client *fiber.App
 	uc     usecase.Usecase
@@ -29,46 +27,52 @@ func NewHandlers(uc usecase.Usecase, client *fiber.App, logger *log.Logger) *Han
 
 // RegisterRoute middleware hm...
 func (h *Handlers) RegisterRoute() {
-	h.client.Get(planURI, func(c fiber.Ctx) error {
-		campus := c.Query("campus")
-		if campus == "" {
-			c.Status(fiber.StatusBadRequest)
-			return errors.New("campus is required")
-		}
+	h.client.Get(planURI, h.GetPlanHandler)
+	h.client.Get("/", h.Success)
+}
 
-		corpus := c.Query("corpus")
-		if corpus == "" {
-			c.Status(fiber.StatusBadRequest)
-			return errors.New("corpus is required")
-		}
+func (h *Handlers) Success(c fiber.Ctx) error {
+	c.Status(fiber.StatusOK)
+	_, err := c.WriteString("Hello, program is successfully set up for more information see https://github.com/MosPolyNavigation/web-back")
+	if err != nil {
+		h.logger.Println(err)
+	}
+	return nil
+}
 
-		floorQuery := c.Query("floor")
-		if floorQuery == "" {
-			c.Status(fiber.StatusBadRequest)
-			return errors.New("floor is required")
-		}
+func (h *Handlers) GetPlanHandler(c fiber.Ctx) error {
+	campus := c.Query("campus")
+	if campus == "" {
+		c.Status(fiber.StatusBadRequest)
+		return errors.New("campus is required")
+	}
 
-		floor, err := strconv.Atoi(c.Query("floor"))
-		if err != nil {
-			c.Status(fiber.StatusBadRequest)
-			return err
-		}
+	corpus := c.Query("corpus")
+	if corpus == "" {
+		c.Status(fiber.StatusBadRequest)
+		return errors.New("corpus is required")
+	}
 
-		if err != nil {
-			h.logger.Debugf("query arg not found: %v", err)
-			c.Status(fiber.StatusBadRequest)
-			return err
-		}
+	floorQuery := c.Query("floor")
+	if floorQuery == "" {
+		c.Status(fiber.StatusBadRequest)
+		return errors.New("floor is required")
+	}
 
-		plan, err := h.uc.GetPlan(campus, corpus, floor)
+	floor, err := strconv.Atoi(c.Query("floor"))
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return err
+	}
 
-		if err != nil {
-			h.logger.Debugf("plan not found: %v", err)
-			c.Status(fiber.StatusNotFound)
-			return err
-		}
+	plan, err := h.uc.GetPlan(campus, corpus, floor)
 
-		c.Status(fiber.StatusOK)
-		return c.JSON(plan)
-	})
+	if err != nil {
+		h.logger.Debugf("plan not found: %v", err)
+		c.Status(fiber.StatusNotFound)
+		return err
+	}
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(plan)
 }
