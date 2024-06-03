@@ -5,7 +5,6 @@ import (
 	"github.com/MosPolyNavigation/web-back/internal/usecase"
 	"strconv"
 
-	"github.com/gofiber/fiber/v3"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -33,7 +32,7 @@ func (h *Handlers) RegisterRoute() {
 
 func (h *Handlers) Success(c fiber.Ctx) error {
 	c.Status(fiber.StatusOK)
-	_, err := c.WriteString("Hello, program is successfully set up for more information see https://github.com/MosPolyNavigation/web-back")
+	_, err := c.WriteString("Hello, program is successfully set up for more information see https://mospolynavigation.github.io/web-back/")
 	if err != nil {
 		h.logger.Println(err)
 	}
